@@ -10,41 +10,31 @@
 
 module.exports = function(grunt) {
 
+    var fs = require('fs'),
+        pathBase = process.env.PWD;
+
   // Please see the Grunt documentation for more information regarding task
   // creation: http://gruntjs.com/creating-tasks
 
-  grunt.registerMultiTask('infographic_generator', 'Criação estrutura básica para novo infográfico', function() {
-    // Merge task-specific and/or target-specific options with these defaults.
-    var options = this.options({
-      punctuation: '.',
-      separator: ', '
-    });
+  grunt.registerTask('infographic_generator', 'Criação estrutura básica para novo infográfico', function( infoName ) {
+    
+    var options = {
+      file: {
+        encoding: 'utf8',
+        force: true
+      },
+      folder: {
+        mode: 0700
+      }
+    };
 
-    // Iterate over all specified file groups.
-    this.files.forEach(function(f) {
-      // Concat specified files.
-      var src = f.src.filter(function(filepath) {
-        // Warn on and remove invalid source files (if nonull was set).
-        if (!grunt.file.exists(filepath)) {
-          grunt.log.warn('Source file "' + filepath + '" not found.');
-          return false;
-        } else {
-          return true;
-        }
-      }).map(function(filepath) {
-        // Read file source.
-        return grunt.file.read(filepath);
-      }).join(grunt.util.normalizelf(options.separator));
+    // // create infographic scss file
+    // grunt.file.copy(pathBase + '/app/styles/infographics/_info-base.scss', pathBase + '/app/styles/infographics/_info-' + infoName + '.scss', options.copy);
 
-      // Handle options.
-      src += options.punctuation;
+    grunt.file.mkdir(pathBase + '/app/images/info-sprite/' + infoName, options.folder);
+    // create infographic sprites folder
+    grunt.file.copy(pathBase + '/app/images/info-sprite/base', pathBase + '/app/images/info-sprite/' + infoName, options.copy);
 
-      // Write the destination file.
-      grunt.file.write(f.dest, src);
-
-      // Print a success message.
-      grunt.log.writeln('File "' + f.dest + '" created.');
-    });
+  //   grunt.file.copy(pathBase + '/app/images/info-sprite/base/', pathBase + '/app/images/info-sprite/' + infoName + '/sprite/', options);
   });
-
 };
